@@ -1,7 +1,19 @@
 function NoteItem({ note, onDelete }) {
   return (
-    <li style={{ marginBottom: 8 }}>
-      {note.text} <button onClick={() => onDelete(note._id)}>X</button>
+    <li className="note-item">
+      <div className="note-card">
+        <div className="note-text">{note.text}</div>
+        <div className="note-actions">
+          <button
+            className="note-delete"
+            onClick={() => onDelete(note._id)}
+            aria-label={`Delete note`}
+            title="Delete"
+          >
+            ×
+          </button>
+        </div>
+      </div>
     </li>
   );
 }

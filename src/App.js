@@ -1,32 +1,41 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import NoteItem from "./components/NoteItem";
+import NoteForm from "./components/NoteForm";
 
 function App() {
   const [notes, setNotes] = useState([]);
   const [text, setText] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [adding, setAdding] = useState(false);
 
   const backendUrl = "https://notes-cngk.onrender.com"
 
   // Fetch all notes
   const getNotes = async () => {
+    setLoading(true);
     try {
       const res = await axios.get(`${backendUrl}/notes`);
       setNotes(res.data);
     } catch (err) {
       console.log(err);
+    } finally {
+      setLoading(false);
     }
   };
 
   // Create a new note
-  const createNote = async () => {
-    if (!text) return;
+  const createNote = async (textParam) => {
+    if (!textParam) return;
+    setAdding(true);
     try {
-      await axios.post(`${backendUrl}/notes`, { text });
-      setText("");
+      await axios.post(`${backendUrl}/notes`, { text: textParam });
       getNotes();
     } catch (err) {
       console.log(err);
+      throw err;
+    } finally {
+      setAdding(false);
     }
   };
 
@@ -45,20 +54,24 @@ function App() {
   }, []);
 
   return (
-    <div style={{ padding: 20 }}>
-      <h1>Notes App</h1>
-      <input
-        value={text}
-        onChange={(e) => setText(e.target.value)}
-        placeholder="Write a note..."
-      />
-      <button onClick={createNote}>Add</button>
+    <div className="container">
+      <header className="app-header">
+        <h1 className="app-title">Notes</h1>
+      </header>
 
-      <ul>
-        {notes.map((note) => (
-          <NoteItem key={note._id} note={note} onDelete={deleteNote} />
-        ))}
-      </ul>
+      <main>
+        <NoteForm onCreate={createNote} adding={adding} />
+
+        {loading ? (
+          <div className="loading">Loading notes...</div>
+        ) : (
+          <ul className="note-list">
+            {notes.map((note) => (
+              <NoteItem key={note._id} note={note} onDelete={deleteNote} />
+            ))}
+          </ul>
+        )}
+      </main>
     </div>
   );
 }
