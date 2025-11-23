@@ -6,7 +6,7 @@ function App() {
   const [notes, setNotes] = useState([]);
   const [text, setText] = useState("");
 
-  const backendUrl = "https://notes-cngk.onrender.com/"
+  const backendUrl = "https://notes-cngk.onrender.com"
 
   // Fetch all notes
   const getNotes = async () => {
